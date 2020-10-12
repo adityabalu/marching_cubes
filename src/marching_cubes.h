@@ -30,7 +30,7 @@ struct Triangle
 struct Mesh
 {
 	size_t vertexCount;
-	Point* vertices = nullptr;
+	Point* vertices;
 	Point* normals;
 	size_t faceCount;
 	size_t* faces;
