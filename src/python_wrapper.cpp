@@ -56,18 +56,42 @@ namespace marching_cubes
             throw py::value_error("vertex or face count are zero: terminating marching cubes");
         }
     
-        std::string vert_format = py::format_descriptor<float>::value;
-        auto vert_info = py::buffer_info(mesh.vertices, sizeof(float), vert_format, 2, { vc, 3 }, { sizeof(float) * 3, sizeof(float) });
-        auto vert_array = py::array(vert_info);
+        //std::string vert_format = py::format_descriptor<float>::value;
+        //auto vert_info = py::buffer_info(mesh.vertices, sizeof(float), vert_format, 2, { vc, 3 }, { sizeof(float) * 3, sizeof(float) });
+        //auto vert_array = py::array(vert_info);
 
-        std::string norm_format = py::format_descriptor<float>::value;
-        auto norm_info = py::buffer_info(mesh.normals, sizeof(float), norm_format, 2, { vc, 3 }, { sizeof(float) * 3, sizeof(float) });
-        auto norm_array = py::array(norm_info);
+        //std::string norm_format = py::format_descriptor<float>::value;
+        //auto norm_info = py::buffer_info(mesh.normals, sizeof(float), norm_format, 2, { vc, 3 }, { sizeof(float) * 3, sizeof(float) });
+        //auto norm_array = py::array(norm_info);
 
-        std::string face_format = py::format_descriptor<unsigned int>::value;
-        auto face_info = py::buffer_info(mesh.faces, sizeof(size_t), face_format, 2, { fc, 3 }, { sizeof(size_t) * 3, sizeof(size_t) });
-        auto face_array = py::array(face_info);
+        //std::string face_format = py::format_descriptor<unsigned int>::value;
+        //auto face_info = py::buffer_info(mesh.faces, sizeof(size_t), face_format, 2, { fc, 3 }, { sizeof(size_t) * 3, sizeof(size_t) });
+        //auto face_array = py::array(face_info);
 
+        py::capsule free_vertices_when_done(mesh.vertices, [](void *f) {
+            float* foo = reinterpret_cast<float *>(f);
+            delete[] foo;
+        });
+        py::capsule free_normals_when_done(mesh.normals, [](void *f) {
+            float* foo = reinterpret_cast<float *>(f);
+            delete[] foo;
+        });
+        py::capsule free_faces_when_done(mesh.faces, [](void *f) {
+            size_t* foo = reinterpret_cast<size_t *>(f);
+            delete[] foo;
+        });
+        auto vert_array = py::array_t<float>({vc,3},
+                                         {sizeof(float)*3,sizeof(float)},
+                                         (float*)mesh.vertices,
+                                         free_vertices_when_done);
+        auto norm_array = py::array_t<float>({vc,3},
+                                         {sizeof(float)*3,sizeof(float)},
+                                         (float*)mesh.normals,
+                                         free_normals_when_done);
+        auto face_array = py::array_t<size_t>({vc,3},
+                                         {sizeof(size_t)*3,sizeof(size_t)},
+                                         (size_t*)mesh.faces,
+                                         free_faces_when_done);
         return std::make_tuple(vert_array, norm_array, face_array);
 
     }
