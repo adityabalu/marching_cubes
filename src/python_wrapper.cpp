@@ -88,7 +88,7 @@ namespace marching_cubes
                                          {sizeof(float)*3,sizeof(float)},
                                          (float*)mesh.normals,
                                          free_normals_when_done);
-        auto face_array = py::array_t<size_t>({vc,3},
+        auto face_array = py::array_t<size_t>({fc,3},
                                          {sizeof(size_t)*3,sizeof(size_t)},
                                          (size_t*)mesh.faces,
                                          free_faces_when_done);
