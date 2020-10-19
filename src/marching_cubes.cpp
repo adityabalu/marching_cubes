@@ -312,6 +312,15 @@ Mesh::Mesh(size_t vertexCount, Point* vertices, Point* normals, size_t faceCount
 Mesh::Mesh()
 {}
 
+Mesh::~Mesh()
+{
+    if (!vertices)
+        delete[] vertices;
+    if (!normals)
+        delete[] normals;
+    if (!faces)
+        delete[] faces;
+}
 
 template <class T>
 Mesh march(const T* volume, size_t xDim, size_t yDim, size_t zDim, T isoLevel)

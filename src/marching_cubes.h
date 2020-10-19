@@ -37,6 +37,7 @@ struct Mesh
 
 	Mesh(size_t, Point*, Point*, size_t, size_t*);
 	Mesh();
+        ~Mesh();
 };
 
 /**
